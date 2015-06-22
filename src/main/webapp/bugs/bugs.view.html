@@ -19,26 +19,47 @@
 				<div class="panel-body">
 					<div class="row">
 						<div class="table-responsive">
-							<table class="table table-bordered table-hover table-striped">
+							<table class="table table-hover">
 								<thead>
 									<tr>
+										<th>#</th>
+										<th>User Name</th>
 										<th>Bug Description</th>
-										<th>User</th>
-										<th>Date</th>
-										<th>TimeFrame</th>
+										<th>Time Frame (24 hour)</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr data-ng-repeat="buglist in bc.buglists track by $index">
-										<td>{{buglist.Description}}</td>
+									<tr ng-repeat="buglist in bc.buglists track by $index">
+										<td>
+											<div class="btn-group">
+												<a class="btn dropdown-toggle" data-toggle="dropdown"
+													href=""> + </a>
+
+												<ul class="dropdown-menu">
+													<li><a href="" ng-click="bc.BugClick(buglist,$event)">CPU Burner</a></li>
+													<li><a href="" ng-click="bc.BugClick(buglist,$event)">Memory Leak</a></li>
+												</ul>
+											</div>
+										</td>
 										<td>{{bc.user}}</td>
-										<td>{{buglist.Date}}</td>
-										<td>{{buglist.TimeFrame}}</td>
+										<td>{{buglist.bugname}}</td>
+										<td>{{buglist.timeframe}}</td>
+										<td><td class="tdCenter" title="remove from bug list"><a href=""
+											ng-click="bc.RemoveFromBugs(bc.buglists,buglist,$index)"><span
+												class="glyphicon glyphicon-remove"></span></a></td>
+
+
 									</tr>
 									<tr>
-										<td colspan="4">
-											<button style="float: right;"
-												ng-click="bc.addNewBug()">Add New Bug</button>
+										<td colspan="6">
+											<button style="float: left;" ng-click="bc.addNewBug()"
+												class="btn btn-primary">Add New Bug</button>
+											<button style="float: right;" ng-click="bc.SubmitBug()"
+												ng-disabled="form.$invalid || bc.dataLoading"
+												class="btn btn-primary">
+												Submit <img ng-if="bc.dataLoading"
+													src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+											</button>
 										</td>
 									</tr>
 								</tbody>
@@ -59,29 +80,10 @@
 				</div>
 				<!-- /.panel-heading -->
 				<div class="panel-body">
-					<div class="list-group">
-						<a href="#" class="list-group-item"> <i
-							class="fa fa-comment fa-fw"></i> Memory Leak <span
-							class="pull-right text-muted small"><em>4 minutes ago</em>
-						</span>
-						</a> <a href="#" class="list-group-item"> <i
-							class="fa fa-twitter fa-fw"></i> 3 DB Crash <span
-							class="pull-right text-muted small"><em>12 minutes
-									ago</em> </span>
-						</a> <a href="#" class="list-group-item"> <i
-							class="fa fa-envelope fa-fw"></i> CPU Consumption <span
-							class="pull-right text-muted small"><em>27 minutes
-									ago</em> </span>
-						</a> <a href="#" class="list-group-item"> <i
-							class="fa fa-tasks fa-fw"></i> CPU Consumption <span
-							class="pull-right text-muted small"><em>43 minutes
-									ago</em> </span>
-						</a> <a href="#" class="list-group-item"> <i
-							class="fa fa-upload fa-fw"></i> Slow Response <span
-							class="pull-right text-muted small"><em>11:32 AM</em> </span>
-						</a> <a href="#" class="list-group-item"> <i
-							class="fa fa-bolt fa-fw"></i> Memory Leak <span
-							class="pull-right text-muted small"><em>11:13 AM</em> </span>
+					<div class="list-group" ng-repeat="notification in bc.notificationlist track by $index">
+						 <a href="#" class="list-group-item"> <i
+							class="fa fa-bolt fa-fw"></i> {{notification.bugname}} <span
+							class="pull-right text-muted small"><em>{{notification.timeframe}}</em> </span>
 						</a>
 					</div>
 				</div>

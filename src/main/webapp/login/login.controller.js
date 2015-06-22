@@ -19,7 +19,6 @@
 		function login() {
 			lc.dataLoading = true;
 			AuthenticationService.Login(lc.username, lc.password, function(response) {
-				console.log(response);
 				if (response.success) {
 					AuthenticationService.SetCredentials(lc.username,lc.password);
 					$location.path('/');

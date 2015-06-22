@@ -19,8 +19,6 @@
 		function Login(username, password, callback) {
 			var response;
 			UserService.ValidateUser(username, password).then(function(user) {
-				console.log("user service");
-				console.log(user);
 				if (user !== null && user.data === "success") {
 					response = {
 						success : true
