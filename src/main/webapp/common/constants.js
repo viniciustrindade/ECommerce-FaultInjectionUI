@@ -29,9 +29,6 @@ var ECommerceApp;
 
 							// get value corresponding to a key from
 							// config.properties
-
-							Constants.SERVICEURL = createConstant("SERVICEURL",
-									 messageResource.get('ui', 'config'));
 							Constants.USERSERVICEURL = createConstant(
 									"USERSERVICEURL",
 									 messageResource.get('hostname', 'config') + 'rest/service/json/login');
