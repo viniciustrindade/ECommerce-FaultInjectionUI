@@ -54,24 +54,49 @@
 		};
 		
 		bc.SubmitBug = function() {
+			var mandatorybug = true;
+			var duplicatebug = true;
+			var duplicatebugname = '';
 			ShowHideControls();
 			bc.dataLoading = true;
-			BugService.SaveFaults(bc.buglists).then(function(response) {
-				if (response != null && response.success != null && !response.success) {
-					FlashService.Error(response.message);
-				}else{
-					FlashService.Success(response.data);
-					bc.buglists = [{
-						'id':1,
-						'username':bc.user,
-						'bugname':'',
-						'timeframe':'',
-					}];
-					ReadFaults();
+			$.each(bc.buglists, function(index, element) {
+				if(element.bugname == '' || element.bugname == 'undefined'){
+					mandatorybug = false;
 				}
-				bc.dataLoading = false;
 			});
 			
+			$.each(bc.buglists, function(index, element) {
+				var bugname = element.bugname;
+				$.each(bc.notificationlist, function(notificationindex, notificationelement) {
+					if(notificationelement.bugname == bugname){
+						duplicatebugname = bugname;
+				    	duplicatebug = false;
+				    }
+				});
+			});
+			
+			if(mandatorybug && duplicatebug)
+			{
+				BugService.SaveFaults(bc.buglists).then(function(response) {
+					if (response != null && response.success != null && !response.success) {
+						FlashService.Error(response.message);
+					}else{
+						FlashService.Success(response.data);
+						bc.buglists = [{
+							'id':1,
+							'username':bc.user,
+							'bugname':'',
+							'timeframe':'',
+						}];
+						ReadFaults();
+					}
+				});
+			} else if(!mandatorybug){
+				FlashService.Error("Please enter a valid Fault name and then click Submit");
+			} else if(!duplicatebug){
+				FlashService.Error(duplicatebugname + " has already been injected");
+			}
+			bc.dataLoading = false;
 		};
 		
 		bc.BugClick = function(buglist,$event) {
@@ -89,7 +114,7 @@
 				else 
 					buglist.timeframe = '13:30 - 14:00';
 			} else {
-				FlashService.Error(angular.element($event.currentTarget).parent().text() + "  has already been added");
+				FlashService.Error(angular.element($event.currentTarget).parent().text() + "  has already been injected");
 			}
 		}
 		
