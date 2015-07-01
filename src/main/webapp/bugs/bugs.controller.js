@@ -110,7 +110,7 @@
 			if(addbug){
 				buglist.bugname = angular.element($event.currentTarget).parent().text();
 				if(buglist.bugname == "CPU Burner")
-					buglist.timeframe = '10:30 - 11:30';
+					buglist.timeframe = '10:00 - 11:30';
 				else 
 					buglist.timeframe = '13:30 - 14:00';
 			} else {
