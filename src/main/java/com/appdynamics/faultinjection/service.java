@@ -63,7 +63,29 @@ public class service {
 				Boolean.TRUE);
 		try {
 			ClientResponse response = Client.create(clientConfig)
-					.resource(GetConfigrestv2() + "cart/savefaults")
+					.resource(GetConfigrestv2() + "fault/savefaults")
+					.type(MediaType.APPLICATION_JSON)
+					.post(ClientResponse.class, lsFault);
+			return response.getEntity(String.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	
+	@POST
+	@Path("/injectfaults")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces(MediaType.TEXT_PLAIN)
+	public String injectFaults(List<Fault> lsFault) throws Exception {
+
+		ClientConfig clientConfig = new DefaultClientConfig();
+		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,
+				Boolean.TRUE);
+		try {
+			ClientResponse response = Client.create(clientConfig)
+					.resource(GetConfigrestv2() + "fault/injectfaults")
 					.type(MediaType.APPLICATION_JSON)
 					.post(ClientResponse.class, lsFault);
 			return response.getEntity(String.class);
@@ -85,7 +107,7 @@ public class service {
 				Boolean.TRUE);
 		try {
 			List<Fault> response = Client.create(clientConfig)
-					.resource(GetConfigrestv2() + "cart/readfaults")
+					.resource(GetConfigrestv2() + "fault/readfaults")
 					.accept(MediaType.APPLICATION_JSON)
 					.header("username", req.getHeader("username"))
 					.get(new GenericType<List<Fault>>() {

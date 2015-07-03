@@ -38,6 +38,9 @@ var ECommerceApp;
 							Constants.READFAULTSERVICEURL = createConstant(
 									"READFAULTSERVICEURL",
 									messageResource.get('hostname', 'config') + 'rest/service/json/readfaults');
+							Constants.INJECTFAULTSERVICEURL = createConstant(
+									"INJECTFAULTSERVICEURL",
+									messageResource.get('hostname', 'config') + 'rest/service/json/injectfaults');
 						});
 
 		ECommerceApp.Constants = Constants;

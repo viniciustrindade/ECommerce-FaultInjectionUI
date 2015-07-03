@@ -44,7 +44,9 @@
 										<td>{{bc.user}}</td>
 										<td>{{buglist.bugname}}</td>
 										<td>{{buglist.timeframe}}</td>
-										<td><td class="tdCenter" title="remove from bug list"><a href=""
+										<td>
+										<td class="tdCenter" title="remove from bug list"><a
+											href=""
 											ng-click="bc.RemoveFromBugs(bc.buglists,buglist,$index)"><span
 												class="glyphicon glyphicon-remove"></span></a></td>
 
@@ -53,11 +55,17 @@
 									<tr>
 										<td colspan="6">
 											<button style="float: left;" ng-click="bc.addNewBug()"
-												class="btn btn-primary">Add New Bug</button>
-											<button style="float: right;" ng-click="bc.SubmitBug()"
+												class="btn btn-primary">Add New Fault</button>
+											<button style="float: right;margin-right:5px" ng-click="bc.InjectNow()"
+												ng-disabled="form.$invalid || bc.injectdataLoading"
+												class="btn btn-primary">
+												Inject Now <img ng-if="bc.injectdataLoading"
+													src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+											</button>
+											<button style="float: right;margin-right:5px" ng-click="bc.SaveBug()"
 												ng-disabled="form.$invalid || bc.dataLoading"
 												class="btn btn-primary">
-												Submit <img ng-if="bc.dataLoading"
+												Save For Later <img ng-if="bc.dataLoading"
 													src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
 											</button>
 										</td>
@@ -80,10 +88,13 @@
 				</div>
 				<!-- /.panel-heading -->
 				<div class="panel-body">
-					<div class="list-group" ng-repeat="notification in bc.notificationlist track by $index">
-						 <a href="#" class="list-group-item"> <i
-							class="fa fa-bolt fa-fw"></i> {{notification.bugname}} <span
-							class="pull-right text-muted small"><em>{{notification.timeframe}}</em> </span>
+					<div class="list-group"
+						ng-repeat="notification in bc.notificationlist track by $index">
+						<a href="" class="list-group-item">
+							<button type="button" class={{notification.btnclass}}>{{notification.action}}</button>
+							<i class="fa fa-bolt fa-fw"></i> {{notification.bugname}} <span
+							class="pull-right text-muted small"><em>{{notification.timeframe}}</em>
+						</span>
 						</a>
 					</div>
 				</div>

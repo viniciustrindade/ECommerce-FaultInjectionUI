@@ -40,7 +40,41 @@
 				if (response != null && response.success != null && !response.success) {
 					FlashService.Error(response.message);
 				} else {
-					bc.notificationlist = response.data;
+					bc.notificationlist = [];
+					var obj = [];
+					$.each(response.data, function(notificationindex, notificationelement) {
+						 var jsonData = {};
+						 jsonData['bugname'] = notificationelement.bugname;
+						 jsonData['timeframe'] = notificationelement.timeframe;
+						 jsonData['username'] = notificationelement.username;
+						 
+						 var currentdate = new Date();
+						 var timeframe = notificationelement.timeframe.split(" - ");
+						 
+						 if(timeframe != null && timeframe != undefined){
+							 var starttime = timeframe[0].split(":");
+							 var endtime = timeframe[1].split(":");
+							 
+							 var startdate = new Date();
+							 startdate.setHours(starttime[0]);
+							 startdate.setMinutes(starttime[1]);
+							 
+							 var enddate = new Date();
+							 enddate.setHours(endtime[0]);
+							 enddate.setMinutes(endtime[1]);
+							 
+							 if(startdate <= currentdate &&
+								enddate >= currentdate){
+								 jsonData['action'] = 'Running';
+								 jsonData['btnclass'] = 'btn btn-warning btn-xs';
+							 }
+							 else{
+								 jsonData['action'] = '  Stop ';
+								 jsonData['btnclass'] = 'btn btn-danger btn-xs';
+							 }
+						 }
+						bc.notificationlist.push(jsonData);
+					});
 				}
 			});
 		}
@@ -53,14 +87,18 @@
 			bc.buglists.push({'id': newItemNo,'username':bc.user});
 		};
 		
-		bc.SubmitBug = function() {
+		bc.SaveBug = function() {
 			var mandatorybug = true;
 			var duplicatebug = true;
 			var duplicatebugname = '';
 			ShowHideControls();
 			bc.dataLoading = true;
+			
+			if(bc.buglists.length == 0)
+				mandatorybug = false;
+			
 			$.each(bc.buglists, function(index, element) {
-				if(element.bugname == '' || element.bugname == 'undefined'){
+				if (element.bugname == null || element.bugname == undefined || element.bugname == ''){
 					mandatorybug = false;
 				}
 			});
@@ -77,7 +115,7 @@
 			
 			if(mandatorybug && duplicatebug)
 			{
-				BugService.SaveFaults(bc.buglists).then(function(response) {
+				BugService.SaveFaults(bc.buglists,false).then(function(response) {
 					if (response != null && response.success != null && !response.success) {
 						FlashService.Error(response.message);
 					}else{
@@ -92,11 +130,45 @@
 					}
 				});
 			} else if(!mandatorybug){
-				FlashService.Error("Please enter a valid Fault name and then click Submit");
+				FlashService.Error("Please enter a valid Fault name.");
 			} else if(!duplicatebug){
 				FlashService.Error(duplicatebugname + " has already been injected");
 			}
 			bc.dataLoading = false;
+		};
+		
+		bc.InjectNow = function() {
+			var mandatorybug = true;
+			ShowHideControls();
+			bc.injectdataLoading = true;
+			
+			if(bc.buglists.length == 0)
+				mandatorybug = false;
+			
+			$.each(bc.buglists, function(index, element) {
+				if (element.bugname == null || element.bugname == undefined || element.bugname == ''){
+					mandatorybug = false;
+				}
+			});
+			if(mandatorybug)
+			{
+				BugService.SaveFaults(bc.buglists,true).then(function(response) {
+					if (response != null && response.success != null && !response.success) {
+						FlashService.Error(response.message);
+					}else{
+						FlashService.Success(response.data);
+						bc.buglists = [{
+							'id':1,
+							'username':bc.user,
+							'bugname':'',
+							'timeframe':'',
+						}];
+					}
+				});
+			} else if(!mandatorybug){
+				FlashService.Error("Please enter a valid Fault name.");
+			} 
+			bc.injectdataLoading = false;
 		};
 		
 		bc.BugClick = function(buglist,$event) {
@@ -108,19 +180,34 @@
 			});
 			
 			if(addbug){
+				//Randomization of Date
+				var randomstarthour = Math.floor((Math.random() * 23));
+				var randomstartminute = Math.floor((Math.random() * 60));
+				var randomoffset = Math.floor((Math.random() * 60));
+				var date = new Date();
+				
+				//Random Start Date
+				date.setHours(randomstarthour);
+				date.setMinutes(randomstartminute);
+				var starthour = date.getHours() > 9 ? date.getHours() : '0' + date.getHours();
+				var startminute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes();
+				
+				//Random End Date by adding random offset
+				date.setMinutes(date.getMinutes() + randomoffset);
+				var endhour = date.getHours() > 9 ? date.getHours() : '0' + date.getHours();
+				var endminute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes();
+				
+				//Assign the bug name and calculated timeframe
 				buglist.bugname = angular.element($event.currentTarget).parent().text();
-				if(buglist.bugname == "CPU Burner")
-					buglist.timeframe = '10:00 - 11:30';
-				else 
-					buglist.timeframe = '13:30 - 14:00';
+				buglist.timeframe = starthour + ':' + startminute + ' - ' + endhour + ':' + endminute;
 			} else {
-				FlashService.Error(angular.element($event.currentTarget).parent().text() + "  has already been injected");
+				FlashService.Error(angular.element($event.currentTarget).parent().text() + "  has already been added");
 			}
 		}
 		
 		//Removes item from bug
 		bc.RemoveFromBugs = function(buglists,buglist,index){
-			if(buglist.bugname != null && buglist.bugname != '' && buglist.bugname != 'undefined'){
+			if(buglist.bugname != null && buglist.bugname != '' && buglist.bugname != undefined){
 				FlashService.Success("'" + buglist.bugname + "'  was removed from your bug lists.");
 			}
 			buglists.splice(index, 1);

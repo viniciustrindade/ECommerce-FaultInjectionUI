@@ -12,10 +12,10 @@
 
 		return service;
 
-		function SaveFaults(jsonData) {
+		function SaveFaults(jsonData,injectNow) {
 			return $http({
 				method : 'POST',
-				url : ECommerceApp.Constants.SAVEFAULTSERVICEURL,
+				url : injectNow == true ? ECommerceApp.Constants.INJECTFAULTSERVICEURL : ECommerceApp.Constants.SAVEFAULTSERVICEURL,
 				data : jsonData, // pass in data as strings
 				headers : {
 					'Content-Type' : 'application/json'
