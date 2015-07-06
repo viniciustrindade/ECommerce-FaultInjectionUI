@@ -205,6 +205,17 @@
 			}
 		}
 		
+		bc.StopFault = function(notificationlist,notification,index) {
+			BugService.StopFaults(bc.user,notification.bugname).then(function(response) {
+				if (response != null && response.success != null && !response.success) {
+					FlashService.Error(response.message);
+				}else{
+					notificationlist.splice(index, 1);
+					FlashService.Success(notification.bugname + " has been stopped succesfully");
+				}
+			});
+		}
+		
 		//Removes item from bug
 		bc.RemoveFromBugs = function(buglists,buglist,index){
 			if(buglist.bugname != null && buglist.bugname != '' && buglist.bugname != undefined){

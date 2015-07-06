@@ -41,6 +41,9 @@ var ECommerceApp;
 							Constants.INJECTFAULTSERVICEURL = createConstant(
 									"INJECTFAULTSERVICEURL",
 									messageResource.get('hostname', 'config') + 'rest/service/json/injectfaults');
+							Constants.STOPFAULTSERVICEURL = createConstant(
+									"STOPFAULTSERVICEURL",
+									messageResource.get('hostname', 'config') + 'rest/service/json/stopfaults');
 						});
 
 		ECommerceApp.Constants = Constants;

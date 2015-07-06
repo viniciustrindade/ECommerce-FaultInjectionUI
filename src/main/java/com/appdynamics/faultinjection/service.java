@@ -31,7 +31,7 @@ public class service {
 	@Path("/login")
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String ValidateUser(@Context HttpServletRequest req,
+	public String validateUser(@Context HttpServletRequest req,
 			@FormParam("username") String name,
 			@FormParam("password") String password) throws Exception {
 		Client client = Client.create();
@@ -56,7 +56,7 @@ public class service {
 	@Path("/savefaults")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces(MediaType.TEXT_PLAIN)
-	public String SaveFaults(List<Fault> lsFault) throws Exception {
+	public String saveFaults(List<Fault> lsFault) throws Exception {
 
 		ClientConfig clientConfig = new DefaultClientConfig();
 		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,
@@ -100,7 +100,7 @@ public class service {
 	@Path("/readfaults")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public String ReadFaults(@Context HttpServletRequest req) throws Exception {
+	public String readFaults(@Context HttpServletRequest req) throws Exception {
 
 		ClientConfig clientConfig = new DefaultClientConfig();
 		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,
@@ -113,6 +113,26 @@ public class service {
 					.get(new GenericType<List<Fault>>() {
 					});
 			return new Gson().toJson(response);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	
+	@GET
+	@Path("/stopfaults")
+	@Produces({ MediaType.TEXT_PLAIN })
+	public String stopfaults(@Context HttpServletRequest req) throws Exception {
+
+		ClientConfig clientConfig = new DefaultClientConfig();
+		try {
+			ClientResponse response = Client.create(clientConfig)
+					.resource(GetConfigrestv2() + "fault/stopfaults")
+					.header("username", req.getHeader("username"))
+					.header("faultname", req.getHeader("faultname"))
+					.get(ClientResponse.class);
+			return response.getEntity(String.class);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

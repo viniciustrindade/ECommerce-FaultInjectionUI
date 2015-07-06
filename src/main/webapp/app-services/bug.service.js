@@ -9,6 +9,7 @@
 
 		service.SaveFaults = SaveFaults;
 		service.ReadFaults = ReadFaults;
+		service.StopFaults = StopFaults;
 
 		return service;
 
@@ -66,6 +67,35 @@
 				};
 			}
 		}
+		
+		function StopFaults(usrname,faultname) {
+			return $http({
+				method : 'GET',
+				url : ECommerceApp.Constants.STOPFAULTSERVICEURL,
+				headers: {
+					   'username': usrname,
+					   'faultname':faultname
+					 }
+			})
+					.then(
+							handleSuccess,
+							handleError('Error while reading the Fault Information. Please try again later.'));
+
+			// private functions
+			function handleSuccess(data) {
+				return data;
+			}
+
+			function handleError(error) {
+				return function() {
+					return {
+						success : false,
+						message : error
+					};
+				};
+			}
+		}
+		
 	}
 
 })();
