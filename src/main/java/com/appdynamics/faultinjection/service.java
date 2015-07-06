@@ -25,7 +25,7 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Path("/service/json")
-public class service {
+public class Service {
 
 	@POST
 	@Path("/login")
@@ -38,7 +38,7 @@ public class service {
 		WebResource webResource = client.resource(GetConfigrestv1()
 				+ "user/login");
 		try {
-			MultivaluedMap formData = new MultivaluedMapImpl();
+			MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
 			formData.add("username", name);
 			formData.add("password", password);
 			ClientResponse response = webResource.type(
@@ -46,7 +46,6 @@ public class service {
 					ClientResponse.class, formData);
 			return response.getEntity(String.class);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw e;
 		}
@@ -68,7 +67,6 @@ public class service {
 					.post(ClientResponse.class, lsFault);
 			return response.getEntity(String.class);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw e;
 		}
@@ -90,7 +88,6 @@ public class service {
 					.post(ClientResponse.class, lsFault);
 			return response.getEntity(String.class);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw e;
 		}
@@ -114,7 +111,6 @@ public class service {
 					});
 			return new Gson().toJson(response);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw e;
 		}
@@ -134,7 +130,6 @@ public class service {
 					.get(ClientResponse.class);
 			return response.getEntity(String.class);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw e;
 		}
@@ -145,7 +140,6 @@ public class service {
 		try {
 			return properties.getrestv2Values();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -156,7 +150,6 @@ public class service {
 		try {
 			return properties.getrestv1Values();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
