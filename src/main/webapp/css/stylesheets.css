@@ -8,6 +8,35 @@ body {
     background-color: #f8f8f8;
 }
 
+.aParent div {
+  float: left;
+  clear: none; 
+}
+
+.fromtime, .totext, .totime{
+  margin-right: 4%;
+}
+
+.select .btn.dropdown-toggle{
+      color:blue;
+      background:#cecece;
+      border-radius:2px;
+}
+.select.open .btn.dropdown-toggle{
+        background-color: #afafaf;
+        font-weight: bold;
+}
+.select > ul.dropdown-menu{
+       max-height: 100px;
+       overflow-y: auto;
+       border-radius:2px;
+}
+     
+.select > ul.dropdown-menu > li{
+         color:blue;
+         background:#cecece;
+}
+
 #wrapper {
     width: 100%;
 }

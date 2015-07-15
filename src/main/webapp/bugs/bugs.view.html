@@ -43,7 +43,29 @@
 										</td>
 										<td>{{bc.user}}</td>
 										<td>{{buglist.bugname}}</td>
-										<td>{{buglist.timeframe}}</td>
+										<td>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 aParent">
+											<div class="dropdown fromtime select">
+											      <button data-toggle="dropdown" class="btn dropdown-toggle" dropdown>
+											        {{buglist.selectedfromtime}} <span class="caret"></span>
+											      </button>
+											      <ul class="dropdown-menu" role="menu">
+											        <li ng-repeat="fromtime in bc.fromtimes"><a ng-click="bc.setfromtime(buglist,fromtime)">{{fromtime}}</a></li>
+											      </ul>
+											 </div>
+					       					<div class="totext">
+					       						<span> - </span>
+					       					</div>
+					       					<div class="dropdown totime select">
+											      <button data-toggle="dropdown" class="btn dropdown-toggle" dropdown>
+											        {{buglist.selectedtotime}} <span class="caret"></span>
+											      </button>
+											      <ul class="dropdown-menu" role="menu">
+											        <li ng-repeat="totime in bc.totimes"><a ng-click="bc.settotime(buglist,totime)">{{totime}}</a></li>
+											      </ul>
+											 </div>
+				       					</div>
+										</td>
 										<td>
 										<td class="tdCenter" title="remove from bug list"><a
 											href=""

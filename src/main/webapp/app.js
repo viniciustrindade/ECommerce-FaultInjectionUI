@@ -2,7 +2,7 @@
 	'use strict';
 	// App Module: the name AngularStore matches the ng-app attribute in the main <html> tag
 	// the route provides parses the URL and injects the appropriate partial page
-	angular.module('app', [ 'ngRoute', 'ngCookies' ]).config(config).run(run).service('sharedProperties',sharedProperties);
+	angular.module('app', [ 'ngRoute', 'ngCookies','ui.bootstrap' ]).config(config).run(run).service('sharedProperties',sharedProperties);
 	config.$inject = [ '$routeProvider', '$locationProvider' ];
 	function config($routeProvider, $locationProvider) {
 		$routeProvider.when('/login', {

@@ -25,13 +25,22 @@
 			$rootScope.flash = null;
 			$("#liuser").show();
 		}
+		
+		bc.status = {
+				isopen: false
+		};
 
 		bc.buglists = [{
 			'id':1,
 			'username':bc.user,
 			'bugname':'',
-			'timeframe':'',
+			'selectedfromtime':'00:00',
+			'selectedtotime':'00:30',
+			'timeframe':''
 		}];
+		
+		bc.fromtimes = getdatatimeframe();
+		bc.totimes = getdatatimeframe();
 		
 		// Regular function with arguments
 		function ReadFaults(){
@@ -79,17 +88,37 @@
 			});
 		}
 		
+		function checkvalidtime(timeframe){
+			var timeframe = timeframe.split(" - ");
+			 if(timeframe != null && timeframe != undefined){
+				 var starttime = timeframe[0].split(":");
+				 var endtime = timeframe[1].split(":");
+				 
+				 var startdate = new Date();
+				 startdate.setHours(starttime[0]);
+				 startdate.setMinutes(starttime[1]);
+				 
+				 var enddate = new Date();
+				 enddate.setHours(endtime[0]);
+				 enddate.setMinutes(endtime[1]);
+				 if(startdate >= enddate)
+					 return false;
+				 else
+					 return true;
+			 }
+		}
 		
 		
 		bc.addNewBug = function() {
 			ShowHideControls();
 			var newItemNo = bc.buglists.length+1;
-			bc.buglists.push({'id': newItemNo,'username':bc.user});
+			bc.buglists.push({'id': newItemNo,'username':bc.user,'selectedfromtime':'00:00','selectedtotime':'00:30'});
 		};
 		
 		bc.SaveBug = function() {
 			var mandatorybug = true;
 			var duplicatebug = true;
+			var invaliddate = true;
 			var duplicatebugname = '';
 			ShowHideControls();
 			bc.dataLoading = true;
@@ -100,6 +129,12 @@
 			$.each(bc.buglists, function(index, element) {
 				if (element.bugname == null || element.bugname == undefined || element.bugname == ''){
 					mandatorybug = false;
+				}
+				//Assign the timeframe
+				element.timeframe = element.selectedfromtime + ' - ' + element.selectedtotime;
+				//Check if start date is greater than end date
+				if(checkvalidtime(element.timeframe) == false){
+					invaliddate = false;
 				}
 			});
 			
@@ -113,7 +148,7 @@
 				});
 			});
 			
-			if(mandatorybug && duplicatebug)
+			if(mandatorybug && duplicatebug && invaliddate)
 			{
 				BugService.SaveFaults(bc.buglists,false).then(function(response) {
 					if (response != null && response.success != null && !response.success) {
@@ -124,16 +159,20 @@
 							'id':1,
 							'username':bc.user,
 							'bugname':'',
-							'timeframe':'',
+							'selectedfromtime':'00:00',
+							'selectedtotime':'00:30',
+							'timeframe':''
 						}];
 						ReadFaults();
 					}
 				});
+			} else if(!invaliddate){
+				FlashService.Error("End date should always be greater than start date");
 			} else if(!mandatorybug){
 				FlashService.Error("Please enter a valid Fault name.");
 			} else if(!duplicatebug){
 				FlashService.Error(duplicatebugname + " has already been injected");
-			}
+			} 
 			bc.dataLoading = false;
 		};
 		
@@ -161,7 +200,9 @@
 							'id':1,
 							'username':bc.user,
 							'bugname':'',
-							'timeframe':'',
+							'selectedfromtime':'00:00',
+							'selectedtotime':'00:30',
+							'timeframe':''
 						}];
 					}
 				});
@@ -180,26 +221,8 @@
 			});
 			
 			if(addbug){
-				//Randomization of Date
-				var randomstarthour = Math.floor((Math.random() * 23));
-				var randomstartminute = Math.floor((Math.random() * 60));
-				var randomoffset = Math.floor((Math.random() * 60));
-				var date = new Date();
-				
-				//Random Start Date
-				date.setHours(randomstarthour);
-				date.setMinutes(randomstartminute);
-				var starthour = date.getHours() > 9 ? date.getHours() : '0' + date.getHours();
-				var startminute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes();
-				
-				//Random End Date by adding random offset
-				date.setMinutes(date.getMinutes() + randomoffset);
-				var endhour = date.getHours() > 9 ? date.getHours() : '0' + date.getHours();
-				var endminute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes();
-				
-				//Assign the bug name and calculated timeframe
+				//Assign the bug name
 				buglist.bugname = angular.element($event.currentTarget).parent().text();
-				buglist.timeframe = starthour + ':' + startminute + ' - ' + endhour + ':' + endminute;
 			} else {
 				FlashService.Error(angular.element($event.currentTarget).parent().text() + "  has already been added");
 			}
@@ -222,6 +245,21 @@
 				FlashService.Success("'" + buglist.bugname + "'  was removed from your bug lists.");
 			}
 			buglists.splice(index, 1);
+		}
+		
+		bc.setfromtime = function(buglist,fromtime) {
+			buglist.selectedfromtime = fromtime;
+		};
+		
+		bc.settotime = function(buglist,totime) {
+			buglist.selectedtotime = totime;
+		};
+		
+		function replacer(key,value)
+		{
+		    if (key=="selectedfromtime") return undefined;
+		    else if (key=="selectedtotime") return undefined;
+		    else return value;
 		}
 	}
 	
