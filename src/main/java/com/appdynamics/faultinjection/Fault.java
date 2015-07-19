@@ -9,15 +9,6 @@ public class Fault {
 	public Fault() {
 	}
 	
-	//Argument Constructor
-	/*public Fault(int id, String bugname, String username, String timeframe) {
-		super();
-		this.id = id;
-		this.bugname = bugname;
-		this.username = username;
-		this.timeframe = timeframe;
-	}*/
-	
 	//Private fields
 	@XmlElement(name="id")
 	private int id;
@@ -43,7 +34,8 @@ public class Fault {
 		this.selectedfromtime = selectedfromtime;
 		this.selectedtotime = selectedtotime;
 	}
-
+	
+	//Getter and Setter of selectedfromtime
 	public String getSelectedfromtime() {
 		return selectedfromtime;
 	}
@@ -52,6 +44,7 @@ public class Fault {
 		this.selectedfromtime = selectedfromtime;
 	}
 
+	//Getter and Setter of selectedtotime
 	public String getSelectedtotime() {
 		return selectedtotime;
 	}
