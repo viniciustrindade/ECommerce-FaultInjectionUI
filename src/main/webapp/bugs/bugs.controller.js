@@ -24,6 +24,8 @@
 		function ShowHideControls() {
 			$rootScope.flash = null;
 			$("#liuser").show();
+			bc.injectdataLoading = false;
+			bc.dataLoading = false;
 		}
 		
 		bc.status = {
@@ -153,6 +155,7 @@
 				BugService.SaveFaults(bc.buglists,false).then(function(response) {
 					if (response != null && response.success != null && !response.success) {
 						FlashService.Error(response.message);
+						bc.dataLoading = false;
 					}else{
 						FlashService.Success(response.data);
 						bc.buglists = [{
@@ -164,16 +167,19 @@
 							'timeframe':''
 						}];
 						ReadFaults();
+						bc.dataLoading = false;
 					}
 				});
 			} else if(!invaliddate){
 				FlashService.Error("End date should always be greater than start date");
+				bc.dataLoading = false;
 			} else if(!mandatorybug){
 				FlashService.Error("Please enter a valid Fault name.");
+				bc.dataLoading = false;
 			} else if(!duplicatebug){
 				FlashService.Error(duplicatebugname + " has already been injected");
+				bc.dataLoading = false;
 			} 
-			bc.dataLoading = false;
 		};
 		
 		bc.InjectNow = function() {
@@ -194,6 +200,7 @@
 				BugService.SaveFaults(bc.buglists,true).then(function(response) {
 					if (response != null && response.success != null && !response.success) {
 						FlashService.Error(response.message);
+						bc.injectdataLoading = false;
 					}else{
 						FlashService.Success(response.data);
 						bc.buglists = [{
@@ -204,12 +211,13 @@
 							'selectedtotime':'00:30',
 							'timeframe':''
 						}];
+						bc.injectdataLoading = false;
 					}
 				});
 			} else if(!mandatorybug){
 				FlashService.Error("Please enter a valid Fault name.");
-			} 
-			bc.injectdataLoading = false;
+				bc.injectdataLoading = false;
+			}
 		};
 		
 		bc.BugClick = function(buglist,$event) {
