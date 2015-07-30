@@ -202,7 +202,7 @@
 						FlashService.Error(response.message);
 						bc.injectdataLoading = false;
 					}else{
-						FlashService.Success(response.data);
+						FlashService.Success("Fault(s) injected successfully");
 						bc.buglists = [{
 							'id':1,
 							'username':bc.user,
