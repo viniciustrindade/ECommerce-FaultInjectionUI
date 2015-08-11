@@ -36,7 +36,6 @@
 													href=""> + </a>
 
 												<ul class="dropdown-menu">
-													<li><a href="" ng-click="bc.BugClick(buglist,$event)">CPU Burner</a></li>
 													<li><a href="" ng-click="bc.BugClick(buglist,$event)">Memory Leak</a></li>
 												</ul>
 											</div>
@@ -101,7 +100,7 @@
 				<!-- /.panel-body -->
 			</div>
 		</div>
-		<!-- /.col-lg-8 -->
+		<!-- /.col-lg-12 -->
 		<div class="col-lg-4">
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -113,7 +112,7 @@
 						ng-repeat="notification in bc.notificationlist track by $index">
 						<a href="" class="list-group-item">
 							<button type="button" class={{notification.btnclass}} ng-click="bc.StopFault(bc.notificationlist,notification,$index)">{{notification.action}}</button>
-							<i class="fa fa-bolt fa-fw"></i> {{notification.bugname}} <span
+							<i class="fa fa-bolt fa-fw"></i> {{notification.bugname}}<span
 							class="pull-right text-muted small"><em>{{notification.timeframe}}</em>
 						</span>
 						</a>
@@ -122,7 +121,7 @@
 				<!-- /.panel-body -->
 			</div>
 		</div>
-		<!-- /.col-lg-4 -->
+		<!-- /.col-lg-12 -->
 	</div>
 	<!-- /.row -->
 </div>
