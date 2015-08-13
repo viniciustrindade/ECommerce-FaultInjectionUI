@@ -111,7 +111,7 @@
 					<div class="list-group"
 						ng-repeat="notification in bc.notificationlist track by $index">
 						<a href="" class="list-group-item">
-							<button type="button" class={{notification.btnclass}} ng-click="bc.StopFault(bc.notificationlist,notification,$index)">{{notification.action}}</button>
+							<button type="button" class="btn btn-danger btn-xs" ng-click="bc.StopFault(bc.notificationlist,notification,$index)">Stop</button>
 							<i class="fa fa-bolt fa-fw"></i> {{notification.bugname}}<span
 							class="pull-right text-muted small"><em>{{notification.timeframe}}</em>
 						</span>

@@ -17,6 +17,7 @@
 			loadCurrentUser();
 			ShowHideControls();
 			ReadFaults();
+			ReadAllFaults();
 		}
 		function loadCurrentUser() {
 			bc.user = $rootScope.globals.currentUser.username;
@@ -58,33 +59,27 @@
 						 jsonData['bugname'] = notificationelement.bugname;
 						 jsonData['timeframe'] = notificationelement.timeframe;
 						 jsonData['username'] = notificationelement.username;
-						 
-						 var currentdate = new Date();
-						 var timeframe = notificationelement.timeframe.split(" - ");
-						 
-						 if(timeframe != null && timeframe != undefined){
-							 var starttime = timeframe[0].split(":");
-							 var endtime = timeframe[1].split(":");
-							 
-							 var startdate = new Date();
-							 startdate.setHours(starttime[0]);
-							 startdate.setMinutes(starttime[1]);
-							 
-							 var enddate = new Date();
-							 enddate.setHours(endtime[0]);
-							 enddate.setMinutes(endtime[1]);
-							 
-							 if(startdate <= currentdate &&
-								enddate >= currentdate){
-								 jsonData['action'] = 'Running';
-								 jsonData['btnclass'] = 'btn btn-warning btn-xs';
-							 }
-							 else{
-								 jsonData['action'] = '  Stop ';
-								 jsonData['btnclass'] = 'btn btn-danger btn-xs';
-							 }
-						 }
-						bc.notificationlist.push(jsonData);
+						 bc.notificationlist.push(jsonData);
+					});
+				}
+			});
+		}
+		
+		// Regular function with arguments
+		function ReadAllFaults(){
+		    // Do The Thing Here
+			BugService.ReadAllFaults(bc.user).then(function(response) {
+				if (response != null && response.success != null && !response.success) {
+					FlashService.Error(response.message);
+				} else {
+					bc.readAllFaultsData = [];
+					var obj = [];
+					$.each(response.data, function(notificationindex, notificationelement) {
+						 var jsonData = {};
+						 jsonData['bugname'] = notificationelement.bugname;
+						 jsonData['timeframe'] = notificationelement.timeframe;
+						 jsonData['username'] = notificationelement.username;
+						 bc.readAllFaultsData.push(jsonData);
 					});
 				}
 			});
@@ -122,6 +117,8 @@
 			var duplicatebug = true;
 			var invaliddate = true;
 			var duplicatebugname = '';
+			var duplicatetimeframe = '';
+			var duplicateusername = ''
 			ShowHideControls();
 			bc.dataLoading = true;
 			
@@ -142,10 +139,42 @@
 			
 			$.each(bc.buglists, function(index, element) {
 				var bugname = element.bugname;
-				$.each(bc.notificationlist, function(notificationindex, notificationelement) {
-					if(notificationelement.bugname == bugname){
-						duplicatebugname = bugname;
-				    	duplicatebug = false;
+				var timeframe = element.timeframe;
+				$.each(bc.readAllFaultsData, function(faultindex, faultelement) {
+					if(faultelement.bugname == bugname){
+						var enteredtimeframe = timeframe.split(" - ");
+						 var existingtimeframe = faultelement.timeframe.split(" - ");
+						 
+						 if(existingtimeframe != null && existingtimeframe != undefined &&  enteredtimeframe != null && enteredtimeframe != undefined){
+							 var starttime = existingtimeframe[0].split(":");
+							 var endtime = existingtimeframe[1].split(":");
+							 
+							 var enteredstarttime = enteredtimeframe[0].split(":");
+							 var enteredendtime = enteredtimeframe[1].split(":");
+							 
+							 var startdate = new Date();
+							 startdate.setHours(starttime[0]);
+							 startdate.setMinutes(starttime[1]);
+							 
+							 var enddate = new Date();
+							 enddate.setHours(endtime[0]);
+							 enddate.setMinutes(endtime[1]);
+							 
+							 var enteredstartdate = new Date();
+							 enteredstartdate.setHours(enteredstarttime[0]);
+							 enteredstartdate.setMinutes(enteredstarttime[1]);
+							 
+							 var enteredenddate = new Date();
+							 enteredenddate.setHours(enteredendtime[0]);
+							 enteredenddate.setMinutes(enteredendtime[1]);
+							 
+							 if(startdate <= enteredstartdate && enddate >= enteredstartdate){
+								 duplicatebugname = bugname;
+								 duplicateusername = faultelement.username;
+								 duplicatetimeframe = faultelement.timeframe;
+								 duplicatebug = false;
+							 }
+						 }
 				    }
 				});
 			});
@@ -177,7 +206,7 @@
 				FlashService.Error("Please enter a valid Fault name.");
 				bc.dataLoading = false;
 			} else if(!duplicatebug){
-				FlashService.Error(duplicatebugname + " has already been injected");
+				FlashService.Error(duplicatebugname + " has already been injected by " + duplicateusername + " from " + duplicatetimeframe);
 				bc.dataLoading = false;
 			} 
 		};

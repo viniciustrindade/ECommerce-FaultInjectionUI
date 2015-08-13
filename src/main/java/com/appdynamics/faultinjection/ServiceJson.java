@@ -117,6 +117,28 @@ public class ServiceJson {
 	}
 	
 	@GET
+	@Path("/readallfaults")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public String readAllFaults(@Context HttpServletRequest req) throws Exception {
+
+		ClientConfig clientConfig = new DefaultClientConfig();
+		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,
+				Boolean.TRUE);
+		try {
+			List<Fault> response = Client.create(clientConfig)
+					.resource(GetConfigrestv2() + "fault/readallfaults")
+					.accept(MediaType.APPLICATION_JSON)
+					.get(new GenericType<List<Fault>>() {
+					});
+			return new Gson().toJson(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	
+	@GET
 	@Path("/stopfaults")
 	@Produces({ MediaType.TEXT_PLAIN })
 	public String stopfaults(@Context HttpServletRequest req) throws Exception {
