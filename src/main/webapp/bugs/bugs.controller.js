@@ -115,8 +115,10 @@
 		bc.SaveBug = function() {
 			var mandatorybug = true;
 			var duplicatebug = true;
+			var duplicatebugbysameuser = true;
 			var invaliddate = true;
 			var duplicatebugname = '';
+			var duplicatebugnamebysameuser = '';
 			var duplicatetimeframe = '';
 			var duplicateusername = ''
 			ShowHideControls();
@@ -179,7 +181,17 @@
 				});
 			});
 			
-			if(mandatorybug && duplicatebug && invaliddate)
+			$.each(bc.buglists, function(index, element) {
+ 				var bugnamebysameuser = element.bugname;
+				$.each(bc.notificationlist, function(notificationindex, notificationelement) {
+					if(notificationelement.bugname == bugnamebysameuser){
+						duplicatebugnamebysameuser = bugnamebysameuser;
+				    	duplicatebugbysameuser = false;
+					}
+				});
+			});
+			
+			if(mandatorybug && duplicatebug && invaliddate && duplicatebugbysameuser)
 			{
 				BugService.SaveFaults(bc.buglists,false).then(function(response) {
 					if (response != null && response.success != null && !response.success) {
@@ -208,7 +220,9 @@
 			} else if(!duplicatebug){
 				FlashService.Error(duplicatebugname + " has already been injected by " + duplicateusername + " from " + duplicatetimeframe);
 				bc.dataLoading = false;
-			} 
+			} else if(!duplicatebugbysameuser){
+				FlashService.Error(duplicatebugnamebysameuser + " has already been injected");
+			}
 		};
 		
 		bc.InjectNow = function() {
