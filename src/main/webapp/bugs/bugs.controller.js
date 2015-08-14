@@ -167,12 +167,12 @@
 							 var enteredenddate = new Date();
 							 enteredenddate.setHours(enteredendtime[0]);
 							 enteredenddate.setMinutes(enteredendtime[1]);
-							 
-							 if(startdate <= enteredstartdate && enddate >= enteredstartdate){
+							 if((startdate <= enteredstartdate && enddate > enteredstartdate) || (startdate < enteredenddate && enddate > enteredenddate)){
 								 duplicatebugname = bugname;
 								 duplicateusername = faultelement.username;
 								 duplicatetimeframe = faultelement.timeframe;
 								 duplicatebug = false;
+								 return;
 							 }
 						 }
 				    }
