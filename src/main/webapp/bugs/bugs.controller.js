@@ -83,7 +83,6 @@
 						 jsonData['username'] = notificationelement.username;
 						 bc.readAllFaultsData.push(jsonData);
 					});
-					 console.log(bc.readAllFaultsData);
 				}
 			});
 		}
