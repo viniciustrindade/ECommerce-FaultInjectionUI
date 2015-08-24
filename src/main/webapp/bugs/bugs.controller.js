@@ -41,6 +41,8 @@
 			'selectedtotime':'00:30',
 			'timeframe':''
 		}];
+		bc.readAllFaultsData = [];
+		bc.notificationlist = [];
 		
 		bc.fromtimes = getdatatimeframe();
 		bc.totimes = getdatatimeframe();
@@ -81,6 +83,7 @@
 						 jsonData['username'] = notificationelement.username;
 						 bc.readAllFaultsData.push(jsonData);
 					});
+					 console.log(bc.readAllFaultsData);
 				}
 			});
 		}
@@ -105,7 +108,6 @@
 			 }
 		}
 		
-		
 		bc.addNewBug = function() {
 			ShowHideControls();
 			var newItemNo = bc.buglists.length+1;
@@ -113,6 +115,8 @@
 		};
 		
 		bc.SaveBug = function() {
+			ShowHideControls();
+			bc.dataLoading = true;
 			var mandatorybug = true;
 			var duplicatebug = true;
 			var duplicatebugbysameuser = true;
@@ -121,75 +125,73 @@
 			var duplicatebugnamebysameuser = '';
 			var duplicatetimeframe = '';
 			var duplicateusername = ''
-			ShowHideControls();
-			bc.dataLoading = true;
-			
-			if(bc.buglists.length == 0)
+			if(bc.buglists == null || bc.buglists == undefined || bc.buglists.length == 0){
 				mandatorybug = false;
-			
-			$.each(bc.buglists, function(index, element) {
-				if (element.bugname == null || element.bugname == undefined || element.bugname == ''){
-					mandatorybug = false;
-				}
-				//Assign the timeframe
-				element.timeframe = element.selectedfromtime + ' - ' + element.selectedtotime;
-				//Check if start date is greater than end date
-				if(checkvalidtime(element.timeframe) == false){
-					invaliddate = false;
-				}
-			});
-			
-			$.each(bc.buglists, function(index, element) {
-				var bugname = element.bugname;
-				var timeframe = element.timeframe;
-				$.each(bc.readAllFaultsData, function(faultindex, faultelement) {
-					if(faultelement.bugname == bugname){
-						var enteredtimeframe = timeframe.split(" - ");
-						 var existingtimeframe = faultelement.timeframe.split(" - ");
-						 
-						 if(existingtimeframe != null && existingtimeframe != undefined &&  enteredtimeframe != null && enteredtimeframe != undefined){
-							 var starttime = existingtimeframe[0].split(":");
-							 var endtime = existingtimeframe[1].split(":");
-							 
-							 var enteredstarttime = enteredtimeframe[0].split(":");
-							 var enteredendtime = enteredtimeframe[1].split(":");
-							 
-							 var startdate = new Date();
-							 startdate.setHours(starttime[0]);
-							 startdate.setMinutes(starttime[1]);
-							 
-							 var enddate = new Date();
-							 enddate.setHours(endtime[0]);
-							 enddate.setMinutes(endtime[1]);
-							 
-							 var enteredstartdate = new Date();
-							 enteredstartdate.setHours(enteredstarttime[0]);
-							 enteredstartdate.setMinutes(enteredstarttime[1]);
-							 
-							 var enteredenddate = new Date();
-							 enteredenddate.setHours(enteredendtime[0]);
-							 enteredenddate.setMinutes(enteredendtime[1]);
-							 if((startdate <= enteredstartdate && enddate > enteredstartdate) || (startdate < enteredenddate && enddate > enteredenddate)){
-								 duplicatebugname = bugname;
-								 duplicateusername = faultelement.username;
-								 duplicatetimeframe = faultelement.timeframe;
-								 duplicatebug = false;
-								 return;
-							 }
-						 }
-				    }
-				});
-			});
-			
-			$.each(bc.buglists, function(index, element) {
- 				var bugnamebysameuser = element.bugname;
-				$.each(bc.notificationlist, function(notificationindex, notificationelement) {
-					if(notificationelement.bugname == bugnamebysameuser){
-						duplicatebugnamebysameuser = bugnamebysameuser;
-				    	duplicatebugbysameuser = false;
+			} else {
+				$.each(bc.buglists, function(index, element) {
+					if (element.bugname == null || element.bugname == undefined || element.bugname == ''){
+						mandatorybug = false;
+					}
+					//Assign the timeframe
+					element.timeframe = element.selectedfromtime + ' - ' + element.selectedtotime;
+					//Check if start date is greater than end date
+					if(checkvalidtime(element.timeframe) == false){
+						invaliddate = false;
 					}
 				});
-			});
+				$.each(bc.buglists, function(index, element) {
+					var bugname = element.bugname;
+					var timeframe = element.timeframe;
+					$.each(bc.readAllFaultsData, function(faultindex, faultelement) {
+						
+						if(faultelement.bugname == bugname){
+							var enteredtimeframe = timeframe.split(" - ");
+							 var existingtimeframe = faultelement.timeframe.split(" - ");
+							 
+							 if(existingtimeframe != null && existingtimeframe != undefined &&  enteredtimeframe != null && enteredtimeframe != undefined){
+								 var starttime = existingtimeframe[0].split(":");
+								 var endtime = existingtimeframe[1].split(":");
+								 
+								 var enteredstarttime = enteredtimeframe[0].split(":");
+								 var enteredendtime = enteredtimeframe[1].split(":");
+								 
+								 var startdate = new Date();
+								 startdate.setHours(starttime[0]);
+								 startdate.setMinutes(starttime[1]);
+								 
+								 var enddate = new Date();
+								 enddate.setHours(endtime[0]);
+								 enddate.setMinutes(endtime[1]);
+								 
+								 var enteredstartdate = new Date();
+								 enteredstartdate.setHours(enteredstarttime[0]);
+								 enteredstartdate.setMinutes(enteredstarttime[1]);
+								 
+								 var enteredenddate = new Date();
+								 enteredenddate.setHours(enteredendtime[0]);
+								 enteredenddate.setMinutes(enteredendtime[1]);
+								 if((startdate <= enteredstartdate && enddate > enteredstartdate) || (startdate < enteredenddate && enddate > enteredenddate)){
+									 duplicatebugname = bugname;
+									 duplicateusername = faultelement.username;
+									 duplicatetimeframe = faultelement.timeframe;
+									 duplicatebug = false;
+									 return;
+								 }
+							 }
+					    }
+					});
+				});
+				
+				$.each(bc.buglists, function(index, element) {
+	 				var bugnamebysameuser = element.bugname;
+					$.each(bc.notificationlist, function(notificationindex, notificationelement) {
+						if(notificationelement.bugname == bugnamebysameuser){
+							duplicatebugnamebysameuser = bugnamebysameuser;
+					    	duplicatebugbysameuser = false;
+						}
+					});
+				});
+			}
 			
 			if(mandatorybug && duplicatebug && invaliddate && duplicatebugbysameuser)
 			{
@@ -208,6 +210,7 @@
 							'timeframe':''
 						}];
 						ReadFaults();
+						ReadAllFaults();
 						bc.dataLoading = false;
 					}
 				});
@@ -222,6 +225,7 @@
 				bc.dataLoading = false;
 			} else if(!duplicatebugbysameuser){
 				FlashService.Error(duplicatebugnamebysameuser + " has already been injected");
+				bc.dataLoading = false;
 			}
 		};
 		
@@ -230,14 +234,15 @@
 			ShowHideControls();
 			bc.injectdataLoading = true;
 			
-			if(bc.buglists.length == 0)
+			if(bc.buglists == null || bc.buglists == undefined || bc.buglists.length == 0){
 				mandatorybug = false;
-			
-			$.each(bc.buglists, function(index, element) {
-				if (element.bugname == null || element.bugname == undefined || element.bugname == ''){
-					mandatorybug = false;
-				}
-			});
+			} else {
+				$.each(bc.buglists, function(index, element) {
+					if (element.bugname == null || element.bugname == undefined || element.bugname == ''){
+						mandatorybug = false;
+					}
+				});
+			}
 			if(mandatorybug)
 			{
 				BugService.SaveFaults(bc.buglists,true).then(function(response) {
@@ -245,7 +250,7 @@
 						FlashService.Error(response.message);
 						bc.injectdataLoading = false;
 					}else{
-						FlashService.Success("Fault(s) injected successfully");
+						FlashService.Success(response.data);
 						bc.buglists = [{
 							'id':1,
 							'username':bc.user,
@@ -286,6 +291,8 @@
 				}else{
 					notificationlist.splice(index, 1);
 					FlashService.Success(notification.bugname + " has been stopped succesfully");
+					ReadFaults();
+					ReadAllFaults();
 				}
 			});
 		}
